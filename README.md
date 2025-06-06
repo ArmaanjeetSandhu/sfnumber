@@ -127,8 +127,6 @@ If you kept all digits (`4.1400 m²`), you're misrepresenting precision — impl
 | Addition/Subtraction      | Round to least decimal places | `3.45 + 1.2` → `4.7` |          |
 | Multiplication/Division   | Round to fewest sig figs      | `2.5 × 3.42` → `8.6` |          |
 
-Almost everything — but since you're asking for **literally everything**, here's a list of **advanced and niche details** that most resources skip. Let’s fill in those gaps.
-
 ## 🔸 **12. Significant Figures vs Decimal Places (Deep Clarification)**
 
 These are **not** the same:
