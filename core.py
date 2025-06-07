@@ -11,6 +11,14 @@ class SigFigNumber:
             self.sigfigs = (
                 self._count_sig_figs(self.original_str) if sigfigs is None else sigfigs
             )
+        elif isinstance(value, (int, float)):
+            if sigfigs is None:
+                raise ValueError(
+                    "When initializing with a number, sigfigs must be provided."
+                )
+            self.value = float(value)
+            self.sigfigs = sigfigs
+            self.original_str = self._format_to_sig_figs(self.value, self.sigfigs)
         else:
             raise TypeError("Unsupported type for SigFigNumber.")
 
