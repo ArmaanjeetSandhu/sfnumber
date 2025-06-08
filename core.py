@@ -235,19 +235,22 @@ class SigFigNumber:
         if self.value <= 0:
             raise ValueError("Logarithm undefined for non-positive values.")
         raw = math.log10(self.value)
-        # Decimal places = number of sig figs in input
-        dec_places = self.sigfigs
-        rounded = round(raw, dec_places)
-        # Return as a float string with correct decimal places
-        return f"{rounded:.{dec_places}f}"
+        # Decimal places in result = sig figs in input
+        return SigFigNumber(raw, self.sigfigs)
 
     def ln(self):
         if self.value <= 0:
             raise ValueError("Logarithm undefined for non-positive values.")
         raw = math.log(self.value)
-        dec_places = self.sigfigs
-        rounded = round(raw, dec_places)
-        return f"{rounded:.{dec_places}f}"
+        return SigFigNumber(raw, self.sigfigs)
+
+    def log(self, base):
+        if self.value <= 0:
+            raise ValueError("Logarithm undefined for non-positive values.")
+        if base <= 0 or base == 1:
+            raise ValueError("Invalid base for logarithm")
+        raw = math.log(self.value) / math.log(base)
+        return SigFigNumber(raw, self.sigfigs)
 
     def exp(self):
         raw = math.exp(self.value)
@@ -265,3 +268,24 @@ class SigFigNumber:
         raw = math.sqrt(self.value)
         sig = self.sigfigs
         return SigFigNumber(raw, sig)
+
+    # Additional functions
+    def sin(self):
+        raw = math.sin(self.value)
+        return SigFigNumber(raw, self.sigfigs)
+
+    def cos(self):
+        raw = math.cos(self.value)
+        return SigFigNumber(raw, self.sigfigs)
+
+    def tan(self):
+        raw = math.tan(self.value)
+        return SigFigNumber(raw, self.sigfigs)
+
+    def degrees(self):
+        raw = math.degrees(self.value)
+        return SigFigNumber(raw, self.sigfigs)
+
+    def radians(self):
+        raw = math.radians(self.value)
+        return SigFigNumber(raw, self.sigfigs)
