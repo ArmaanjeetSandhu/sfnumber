@@ -111,7 +111,11 @@ class SigFigNumber:
     def _get_decimal_places(self):
         """Calculate decimal places based on the stored sig figs and value"""
         if self.value == 0:
-            if self.original_str and "." in self.original_str:
+            if (
+                hasattr(self, "original_str")
+                and self.original_str
+                and "." in self.original_str
+            ):
                 return len(self.original_str.split(".")[-1])
             return 0
 
@@ -249,13 +253,11 @@ class SigFigNumber:
         raw = math.exp(self.value)
         # Sig figs in result = decimal places of exponent
         dec_places = self._get_decimal_places()
-        # Round result to that many sig figs
-        # Convert dec_places to sig figs: approximate by order of magnitude
+        # Convert dec_places to sig figs for the result
         if raw == 0:
             return SigFigNumber(0, 1)
-        order = math.floor(math.log10(abs(raw)))
-        sig = dec_places + order + 1
-        return SigFigNumber(raw, sig)
+        result_sigfigs = max(1, dec_places)
+        return SigFigNumber(raw, result_sigfigs)
 
     def sqrt(self):
         if self.value < 0:
