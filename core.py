@@ -25,13 +25,20 @@ class SigFigNumber:
     def __repr__(self):
         return f"{self._rounded_str()} (±{self.sigfigs} sf)"
 
+    def __str__(self):
+        return self._rounded_str()
+
     def _rounded_str(self):
         return self._format_to_sig_figs(self.value, self.sigfigs)
 
     def _format_to_sig_figs(self, x, sigfigs):
         if x == 0:
             # Represent zero with appropriate decimal places if originally decimal zeros
-            if self.original_str and "." in self.original_str:
+            if (
+                hasattr(self, "original_str")
+                and self.original_str
+                and "." in self.original_str
+            ):
                 dec_len = len(self.original_str.split(".")[-1])
                 return f"0.{'0' * (dec_len)}"
             return "0"
@@ -175,6 +182,35 @@ class SigFigNumber:
             result_sigfigs = self._count_sig_figs(result_str)
 
         return SigFigNumber(rounded_val, result_sigfigs)
+
+    def __pow__(self, other):
+        if not isinstance(other, SigFigNumber):
+            other = SigFigNumber(other)
+
+        # Handle special cases
+        if self.value == 0:
+            if other.value < 0:
+                raise ValueError("Cannot raise 0 to a negative power")
+            if other.value == 0:
+                raise ValueError("0^0 is undefined")
+            return SigFigNumber(0, self.sigfigs)
+
+        # Handle negative base with integer exponent
+        if self.value < 0:
+            # Check if exponent is effectively an integer
+            if abs(other.value - round(other.value)) < 1e-10:
+                # Use direct calculation for integer exponents with negative bases
+                integer_exp = round(other.value)
+                val = self.value**integer_exp
+                # For integer exponents, result has same sig figs as base
+                return SigFigNumber(val, self.sigfigs)
+            else:
+                raise ValueError("Cannot raise negative number to non-integer power")
+
+        # For positive bases, use the elegant ln/exp method
+        ln_self = self.ln()
+        exponent = ln_self * other
+        return exponent.exp()
 
     # Unary operations
     def __neg__(self):
